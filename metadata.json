@@ -1,0 +1,7 @@
+{
+  "name": "Aegis-7 Emergency Control",
+  "description": "A mission-critical space station distress control panel featuring real-time resource telemetry, emergency overrides, and a Gemini-powered AI survival consultant.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
