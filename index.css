@@ -6,7 +6,7 @@
   --among-yellow: #f5f512;
   --among-orange: #ef7d0e;
   --among-dark: #121b28;
-  --among-panel: #222a35;
+  --among-panel: #2b3641;
 }
 
 body {
@@ -14,82 +14,96 @@ body {
   background-color: transparent;
   color: #fff;
   font-family: 'JetBrains+Mono', monospace;
-  min-height: 100vh;
 }
 
-.font-orbitron { font-family: 'Orbitron', sans-serif; }
-
-/* Neon Glow for "AMONG US" Logo */
+/* Neon Logo */
 .neon-text {
   color: #fff;
+  font-family: 'Orbitron', sans-serif;
   text-shadow: 
-    0 0 7px #fff,
-    0 0 10px #fff,
-    0 0 21px #38fedc,
-    0 0 42px #38fedc,
-    0 0 82px #38fedc,
-    0 0 92px #38fedc,
-    0 0 102px #38fedc,
-    0 0 151px #38fedc;
+    0 0 10px #38fedc,
+    0 0 20px #38fedc,
+    0 0 40px #38fedc,
+    0 0 80px #38fedc;
 }
 
-/* Login Button Gradient & Pattern */
-.login-button-bg {
-  background: linear-gradient(180deg, #10b6d4 0%, #0891b2 100%);
-  background-image: radial-gradient(circle, #38fedc 1px, transparent 1px);
-  background-size: 8px 8px;
-  box-shadow: 0 4px 0px #064e3b;
+/* Plaque style */
+.secure-login-plaque {
+  background: #1a0505;
+  border: 2px solid #522;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.8);
 }
 
-/* Among Us UI Elements */
-.among-panel {
-  background-color: #2b3641;
-  border: 2px solid #4a5568;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-  position: relative;
-}
-
-.among-panel::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: rgba(255,255,255,0.1);
+/* Identity Panel */
+.identity-panel {
+  background-color: var(--among-panel);
+  border: 1px solid #4a5568;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.9);
 }
 
 .screw {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background: #1a202c;
-  border: 2px solid #4a5568;
+  border: 1px solid #4a5568;
   border-radius: 50%;
   position: absolute;
 }
 
-.meeting-siren {
-  animation: siren 1.5s infinite;
+/* Login Button Pattern */
+.login-button-textured {
+  background: linear-gradient(180deg, #10b6d4 0%, #0891b2 100%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 0px #064e3b;
 }
 
-@keyframes siren {
-  0%, 100% { background-color: rgba(197, 17, 17, 0.1); }
-  50% { background-color: rgba(197, 17, 17, 0.4); }
+.login-button-textured::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+  background-size: 6px 6px;
+  pointer-events: none;
 }
 
-@keyframes marquee {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(500%); }
+.login-button-textured:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px #064e3b;
 }
 
-/* Skeld Ship Animation */
+/* Skeld Animation */
 .skeld-fly {
-  animation: skeldFly 15s linear infinite;
+  animation: skeldFly 25s linear infinite;
 }
 
 @keyframes skeldFly {
-  0% { transform: translate(110vw, 20vh) rotate(-5deg) scale(0.8); }
-  100% { transform: translate(-50vw, 60vh) rotate(5deg) scale(1.2); }
+  0% { transform: translate(120vw, 15vh) rotate(-10deg) scale(0.7); }
+  100% { transform: translate(-60vw, 75vh) rotate(5deg) scale(1.3); }
 }
 
-.input-glow:focus {
-  box-shadow: 0 0 10px rgba(56, 254, 220, 0.5);
-  border-color: #38fedc;
+.input-field {
+  background: white;
+  color: black;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid #718096;
+  border-right: 8px solid #cbd5e0;
+}
+
+.progress-track {
+  background: #1a202c;
+  border: 2px solid #000;
+  border-radius: 9999px;
+  height: 12px;
+}
+
+.progress-fill {
+  background: var(--among-yellow);
+  height: 100%;
+}
+
+.footer-access {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  border-top: 1px solid #2d3748;
 }
