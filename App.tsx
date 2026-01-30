@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import AlertBanner from './components/AlertBanner.tsx';
-import TelemetryOverlay from './components/TelemetryOverlay.tsx';
-import SystemControls from './components/SystemControls.tsx';
-import AIAssistant from './components/AIAssistant.tsx';
-import BiometricMonitor from './components/BiometricMonitor.tsx';
-import SectorDiagnostic from './components/SectorDiagnostic.tsx';
-import { SystemState, LogEntry, EmergencyAction, CrewStatus, SectorDiagnostic as SectorType } from './types.ts';
-import { audioService } from './services/audioService.ts';
+import AlertBanner from './components/AlertBanner';
+import TelemetryOverlay from './components/TelemetryOverlay';
+import SystemControls from './components/SystemControls';
+import AIAssistant from './components/AIAssistant';
+import BiometricMonitor from './components/BiometricMonitor';
+import SectorDiagnostic from './components/SectorDiagnostic';
+import { SystemState, LogEntry, EmergencyAction, CrewStatus, SectorDiagnostic as SectorType } from './types';
+import { audioService } from './services/audioService';
 
 type Phase = 'INTRO' | 'LOGIN' | 'DASHBOARD';
 
