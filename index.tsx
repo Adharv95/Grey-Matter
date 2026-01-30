@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { html } from 'htm';
-import App from './App.js';
+import App from './App';
 
 const container = document.getElementById('root');
 if (!container) {
@@ -9,4 +8,4 @@ if (!container) {
 }
 
 const root = createRoot(container);
-root.render(html`<${App} />`);
+root.render(<App />);

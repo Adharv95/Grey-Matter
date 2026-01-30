@@ -1,23 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { html } from 'htm';
-import AlertBanner from './components/AlertBanner.js';
-import TelemetryOverlay from './components/TelemetryOverlay.js';
-import SystemControls from './components/SystemControls.js';
-import AIAssistant from './components/AIAssistant.js';
-import BiometricMonitor from './components/BiometricMonitor.js';
-import SectorDiagnostic from './components/SectorDiagnostic.js';
-import { audioService } from './services/audioService.js';
+import AlertBanner from './components/AlertBanner';
+import TelemetryOverlay from './components/TelemetryOverlay';
+import SystemControls from './components/SystemControls';
+import AIAssistant from './components/AIAssistant';
+import BiometricMonitor from './components/BiometricMonitor';
+import SectorDiagnostic from './components/SectorDiagnostic';
+import { audioService } from './services/audioService';
+// Import types for explicit state management
+import { CrewStatus, SectorDiagnostic as SectorType, LogEntry, EmergencyAction } from './types';
 
-const SkeldSilhouette = () => html`
+const SkeldSilhouette = () => (
   <div className="skeld-silhouette absolute pointer-events-none opacity-20">
     <svg width="600" height="300" viewBox="0 0 400 200" className="animate-[pulse_10s_infinite]">
       <path d="M50 100 L150 50 L350 70 L380 100 L350 130 L150 150 Z" fill="#2d3748" stroke="#38fedc" strokeWidth="2" />
       <circle cx="280" cy="85" r="15" fill="#1a202c" />
     </svg>
   </div>
-`;
+);
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
   const [formData] = useState({
     username: 'CREWMATE_01',
     email: 'user@mira.hq',
@@ -25,7 +26,7 @@ const LoginPage = ({ onLogin }) => {
     reg: 'ID-734-X2'
   });
 
-  return html`
+  return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#1a0808]/40 p-4 relative overflow-hidden">
       <div className="mb-12 text-center z-10">
         <h1 className="neon-logo text-7xl md:text-[10rem] mb-4">AMONG US</h1>
@@ -47,28 +48,28 @@ const LoginPage = ({ onLogin }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          ${[
+          {[
             { label: 'Username', val: formData.username },
             { label: 'Email Address', val: formData.email },
             { label: 'Comms ID', val: formData.comms },
             { label: 'Registration No.', val: formData.reg }
-          ].map((field) => html`
-            <div key=${field.label} className="space-y-1.5">
-              <label className="text-gray-400 text-[10px] font-black uppercase tracking-widest block">${field.label}</label>
-              <input readOnly value=${field.val} className="w-full bg-white text-black p-2 font-bold text-sm border-r-8 border-[#cbd5e0] focus:outline-none" />
+          ].map((field) => (
+            <div key={field.label} className="space-y-1.5">
+              <label className="text-gray-400 text-[10px] font-black uppercase tracking-widest block">{field.label}</label>
+              <input readOnly value={field.val} className="w-full bg-white text-black p-2 font-bold text-sm border-r-8 border-[#cbd5e0] focus:outline-none" />
             </div>
-          `)}
+          ))}
         </div>
 
         <button 
-          onClick=${onLogin}
+          onClick={onLogin}
           className="w-full mt-6 py-5 login-button-cyan text-white font-orbitron font-black text-3xl tracking-widest uppercase italic shadow-[0_5px_0_#064e3b] transition-transform active:translate-y-1"
         >
           Access Terminal
         </button>
       </div>
     </div>
-  `;
+  );
 };
 
 const App = () => {
@@ -82,20 +83,23 @@ const App = () => {
     co2Levels: 1750,
   });
 
-  const [crew] = useState([
+  // Fixed: Explicitly typed useState with CrewStatus[] to avoid 'condition' being inferred as string
+  const [crew] = useState<CrewStatus[]>([
     { id: 'RED-01', name: 'RED CREWMATE', heartRate: 75, oxygenSat: 98, condition: 'STABLE' },
     { id: 'CYAN-02', name: 'CYAN CREWMATE', heartRate: 82, oxygenSat: 97, condition: 'STABLE' },
     { id: 'LIME-03', name: 'LIME CREWMATE', heartRate: 70, oxygenSat: 99, condition: 'STABLE' }
   ]);
 
-  const [sectors] = useState([
+  // Fixed: Added explicit typing for sectors
+  const [sectors] = useState<SectorType[]>([
     { name: 'Electrical', status: 40, load: 85, isBreached: true },
     { name: 'O2 Room', status: 32, load: 12, isBreached: true },
     { name: 'MedBay', status: 95, load: 20, isBreached: false },
     { name: 'Reactor', status: 18, load: 95, isBreached: true }
   ]);
 
-  const [logs] = useState([
+  // Fixed: Added explicit typing for logs
+  const [logs] = useState<LogEntry[]>([
     { id: '1', timestamp: '14:22:01', level: 'CRITICAL', message: 'Oxygen sabotaged in O2 Room.' },
     { id: '2', timestamp: '14:23:45', level: 'WARN', message: 'Lights flickering in Electrical.' },
   ]);
@@ -115,7 +119,8 @@ const App = () => {
     return () => clearInterval(timer);
   }, [phase]);
 
-  const handleAction = useCallback((action) => {
+  // Fixed: Added type for action parameter
+  const handleAction = useCallback((action: EmergencyAction) => {
     setIsProcessing(true);
     audioService.playWhir();
     setTimeout(() => {
@@ -131,31 +136,31 @@ const App = () => {
   }, []);
 
   if (phase === 'INTRO') {
-    return html`
+    return (
       <div 
         className="min-h-screen flex flex-col items-center justify-center cursor-pointer bg-black overflow-hidden"
-        onClick=${() => {
+        onClick={() => {
           audioService.init();
           setPhase('LOGIN');
         }}
       >
-        <${SkeldSilhouette} />
+        <SkeldSilhouette />
         <div className="z-10 text-center animate-pulse">
           <h1 className="font-orbitron font-black text-white text-5xl mb-4 tracking-[0.4em] italic uppercase">Aegis-7 Station</h1>
           <p className="font-mono text-[#38fedc] text-sm uppercase tracking-widest opacity-70 italic">Click to Initiate Handshake</p>
         </div>
       </div>
-    `;
+    );
   }
 
   if (phase === 'LOGIN') {
-    return html`<${LoginPage} onLogin=${() => {
+    return <LoginPage onLogin={() => {
       audioService.playSuccess();
       setPhase('DASHBOARD');
-    }} />`;
+    }} />;
   }
 
-  return html`
+  return (
     <div className="min-h-screen bg-[#121b28]/50 pb-20">
       <header className="relative z-20 border-b-8 border-black bg-[#121b28] p-8 sticky top-0 shadow-2xl">
         <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
@@ -169,23 +174,23 @@ const App = () => {
           <div className="flex gap-16 items-center">
             <div className="text-right">
               <div className="text-[12px] text-white/40 font-black uppercase italic tracking-widest">O2 Status</div>
-              <div className=${`font-orbitron text-4xl font-black ${systemState.oxygen < 30 ? 'text-[#c51111] animate-pulse' : 'text-[#38fedc]'}`}>${systemState.oxygen.toFixed(1)}%</div>
+              <div className={`font-orbitron text-4xl font-black ${systemState.oxygen < 30 ? 'text-[#c51111] animate-pulse' : 'text-[#38fedc]'}`}>{systemState.oxygen.toFixed(1)}%</div>
             </div>
             <div className="h-16 w-3 bg-black rounded-full"></div>
             <div className="text-right">
               <div className="text-[12px] text-white/40 font-black uppercase italic tracking-widest">Hull Health</div>
-              <div className=${`font-orbitron text-4xl font-black ${systemState.integrity < 30 ? 'text-[#c51111] animate-pulse' : 'text-white'}`}>${systemState.integrity.toFixed(1)}%</div>
+              <div className={`font-orbitron text-4xl font-black ${systemState.integrity < 30 ? 'text-[#c51111] animate-pulse' : 'text-white'}`}>{systemState.integrity.toFixed(1)}%</div>
             </div>
           </div>
         </div>
       </header>
 
-      <${AlertBanner} message="CRITICAL SYSTEM FAILURE: FIX SHIP TASKS" />
+      <AlertBanner message="CRITICAL SYSTEM FAILURE: FIX SHIP TASKS" />
 
       <main className="max-w-[1800px] mx-auto p-8 grid grid-cols-1 lg:grid-cols-12 gap-12 mt-4">
         <div className="lg:col-span-3 flex flex-col gap-12">
-          <${BiometricMonitor} crew=${crew} />
-          <${TelemetryOverlay} state=${systemState} />
+          <BiometricMonitor crew={crew} />
+          <TelemetryOverlay state={systemState} />
         </div>
 
         <div className="lg:col-span-6 flex flex-col gap-12">
@@ -198,35 +203,35 @@ const App = () => {
              
              <div className="absolute top-10 left-10 font-orbitron text-2xl text-[#f5f512] font-black italic z-10">
                LOC: NAVIGATION<br/>
-               <span className="text-[#38fedc] text-lg">PWR_LEVEL: ${systemState.power.toFixed(1)}%</span>
+               <span className="text-[#38fedc] text-lg">PWR_LEVEL: {systemState.power.toFixed(1)}%</span>
              </div>
 
             <div className="absolute inset-x-0 bottom-0 p-10 bg-gradient-to-t from-black via-black/80 to-transparent z-10">
-              <${SystemControls} onAction=${handleAction} disabled=${isProcessing} />
+              <SystemControls onAction={handleAction} disabled={isProcessing} />
             </div>
           </div>
           
           <div className="among-panel p-8 border-[8px] border-black min-h-[300px]">
             <h3 className="text-sm font-black text-white/50 mb-6 tracking-widest uppercase italic">Diagnostic_Feed</h3>
             <div className="space-y-3">
-              ${logs.map(log => html`
-                <div key=${log.id} className="text-[13px] border-l-8 border-black pl-4 bg-black/30 p-3 rounded-2xl">
-                  <span className="text-white/30 italic">[${log.timestamp}]</span>{' '}
-                  <span className=${log.level === 'CRITICAL' ? 'text-[#c51111]' : 'text-[#38fedc]'}>${log.level}:</span>{' '}
-                  <span className="text-white uppercase italic">${log.message}</span>
+              {logs.map(log => (
+                <div key={log.id} className="text-[13px] border-l-8 border-black pl-4 bg-black/30 p-3 rounded-2xl">
+                  <span className="text-white/30 italic">[{log.timestamp}]</span>{' '}
+                  <span className={log.level === 'CRITICAL' ? 'text-[#c51111]' : 'text-[#38fedc]'}>{log.level}:</span>{' '}
+                  <span className="text-white uppercase italic">{log.message}</span>
                 </div>
-              `)}
+              ))}
             </div>
           </div>
         </div>
 
         <div className="lg:col-span-3 flex flex-col gap-12">
-           <${AIAssistant} systemState=${systemState} />
-           <${SectorDiagnostic} sectors=${sectors} />
+           <AIAssistant systemState={systemState} />
+           <SectorDiagnostic sectors={sectors} />
         </div>
       </main>
     </div>
-  `;
+  );
 };
 
 export default App;
