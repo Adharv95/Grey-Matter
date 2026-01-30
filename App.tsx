@@ -18,8 +18,21 @@ const FloatingCrewmate = ({ color, top, delay }: { color: string, top: string, d
   </div>
 );
 
+const CrewmateLogo = ({ color, size = "w-48 h-60" }: { color: string, size?: string }) => (
+  <div className={`${size} relative animate-bounce flex items-center justify-center drop-shadow-[0_20px_20px_rgba(0,0,0,0.5)]`}>
+    <svg width="100%" height="100%" viewBox="0 0 40 50">
+      <path d="M5 15 Q5 5 20 5 Q35 5 35 15 L35 35 Q35 45 28 45 L25 45 L25 48 Q25 50 22 50 L18 50 Q15 50 15 48 L15 45 L12 45 Q5 45 5 35 Z" fill={color} stroke="black" strokeWidth="3" />
+      <path d="M20 12 Q32 12 32 18 Q32 24 20 24 Q8 24 8 18 Q8 12 20 12" fill="#88d8f1" stroke="black" strokeWidth="2.5" />
+      <path d="M15 15 Q25 15 25 18" fill="white" opacity="0.5" stroke="none" />
+      <path d="M2 18 Q0 18 0 23 L0 35 Q0 40 2 40" fill={color} stroke="black" strokeWidth="3" />
+    </svg>
+  </div>
+);
+
 const App: React.FC = () => {
-  const [isAudioInit, setIsAudioInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [crewName, setCrewName] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#c51111');
   const [systemState, setSystemState] = useState<SystemState>({
     oxygen: 45.5,
     power: 28.2,
@@ -49,15 +62,34 @@ const App: React.FC = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const initAudio = () => {
-    if (!isAudioInit) {
-      audioService.init();
-      setIsAudioInit(true);
-      audioService.playSuccess();
-    }
+  const colors = [
+    { name: 'Red', hex: '#c51111' },
+    { name: 'Cyan', hex: '#38fedc' },
+    { name: 'Lime', hex: '#50ef39' },
+    { name: 'Blue', hex: '#132ed1' },
+    { name: 'Yellow', hex: '#f5f512' },
+    { name: 'Orange', hex: '#ef7d0e' },
+  ];
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!crewName.trim()) return;
+    
+    audioService.init();
+    setIsLoggedIn(true);
+    audioService.playSuccess();
+    
+    setCrew(prev => [{ 
+      id: 'PLAYER-01', 
+      name: `${crewName} (${colors.find(c => c.hex === selectedColor)?.name})`, 
+      heartRate: 72, 
+      oxygenSat: 98, 
+      condition: 'STABLE' 
+    }, ...prev]);
   };
 
   useEffect(() => {
+    if (!isLoggedIn) return;
     const timer = setInterval(() => {
       setSystemState(prev => {
         const nextO2 = Math.max(0, prev.oxygen - 0.15);
@@ -80,7 +112,7 @@ const App: React.FC = () => {
       });
     }, 2000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isLoggedIn]);
 
   const handleAction = useCallback((action: EmergencyAction) => {
     setIsProcessing(true);
@@ -125,22 +157,81 @@ const App: React.FC = () => {
     }, 1500);
   }, []);
 
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <FloatingCrewmate color="#c51111" top="15%" delay="0s" />
+        <FloatingCrewmate color="#38fedc" top="75%" delay="12s" />
+        <FloatingCrewmate color="#f5f512" top="40%" delay="6s" />
+
+        <div className="z-10 w-full max-w-2xl flex flex-col items-center">
+          <CrewmateLogo color={selectedColor} />
+          
+          <h1 className="mt-8 font-orbitron font-black text-5xl md:text-7xl text-white uppercase italic tracking-tighter drop-shadow-[8px_8px_0px_rgba(0,0,0,1)] text-center mb-12">
+            THE SKELD
+          </h1>
+
+          <div className="w-full bg-[#222a35] among-border p-10 rounded-[3rem] border-8 border-black">
+            <form onSubmit={handleLogin} className="space-y-8">
+              <div>
+                <label className="block text-xs font-black text-white/50 uppercase italic mb-3 tracking-[0.3em]">Enter Crewmate Identity</label>
+                <input 
+                  autoFocus
+                  type="text" 
+                  maxLength={15}
+                  value={crewName}
+                  onChange={(e) => setCrewName(e.target.value)}
+                  className="w-full bg-black border-4 border-black rounded-2xl p-5 text-2xl text-white font-black uppercase italic focus:outline-none focus:border-[#38fedc] transition-all shadow-[inset_0_4px_10px_rgba(0,0,0,0.8)] placeholder-white/10"
+                  placeholder="PLAYER NAME"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-white/50 uppercase italic mb-4 tracking-[0.3em]">Select Suit Color</label>
+                <div className="flex flex-wrap justify-center gap-4">
+                  {colors.map((c) => (
+                    <button
+                      key={c.hex}
+                      type="button"
+                      onClick={() => setSelectedColor(c.hex)}
+                      className={`w-12 h-12 rounded-full border-4 border-black among-button transition-transform ${selectedColor === c.hex ? 'scale-125 border-white ring-4 ring-[#38fedc]/50' : 'hover:scale-110'}`}
+                      style={{ backgroundColor: c.hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                disabled={!crewName.trim()}
+                className="w-full p-8 border-8 border-black bg-[#38fedc] text-black font-orbitron font-black text-4xl tracking-widest hover:scale-105 active:scale-95 transition-all among-button italic uppercase disabled:opacity-30 disabled:grayscale disabled:scale-100"
+              >
+                JOIN GAME
+              </button>
+            </form>
+          </div>
+
+          <div className="mt-12 flex gap-10 items-center">
+            <div className="text-center">
+              <div className="text-[10px] text-white/30 font-black uppercase italic tracking-widest">Region</div>
+              <div className="text-[#50ef39] font-black uppercase italic">North America</div>
+            </div>
+            <div className="w-1 h-8 bg-white/10"></div>
+            <div className="text-center">
+              <div className="text-[10px] text-white/30 font-black uppercase italic tracking-widest">Server Status</div>
+              <div className="text-[#38fedc] font-black uppercase italic">Online</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen relative overflow-y-auto" onClick={initAudio}>
+    <div className="min-h-screen relative overflow-y-auto">
       <FloatingCrewmate color="#c51111" top="20%" delay="0s" />
       <FloatingCrewmate color="#38fedc" top="60%" delay="10s" />
       <FloatingCrewmate color="#50ef39" top="10%" delay="5s" />
-
-      {!isAudioInit && (
-        <div className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center">
-          <div className="mb-12 w-64 h-64 rounded-full bg-[#c51111] border-[12px] border-black among-border flex items-center justify-center animate-bounce shadow-2xl emergency-pulse">
-            <span className="text-white font-orbitron font-black text-8xl drop-shadow-[6px_6px_0px_rgba(0,0,0,1)]">!</span>
-          </div>
-          <button onClick={initAudio} className="p-10 border-8 border-black bg-[#f5f512] text-black font-orbitron font-black text-4xl tracking-[0.1em] hover:scale-110 active:scale-95 transition-all among-button italic uppercase">
-            FIX THE SHIP
-          </button>
-        </div>
-      )}
 
       {/* Header */}
       <header className="relative z-20 border-b-8 border-black bg-[#121b28]/95 p-5 sticky top-0">
@@ -186,7 +277,6 @@ const App: React.FC = () => {
         {/* Center Side: Map & Controls */}
         <div className="lg:col-span-6 flex flex-col gap-10">
           <div className="among-panel relative overflow-hidden group border-8 border-black aspect-video flex-shrink-0">
-             {/* Security Map Visual */}
              <div className="absolute inset-0 bg-[#000] pointer-events-none flex items-center justify-center">
                 <div className="absolute top-10 right-10 flex items-center gap-3 z-10">
                    <div className="w-4 h-4 bg-red-600 rounded-full animate-pulse border-4 border-black"></div>
