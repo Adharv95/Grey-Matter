@@ -6,18 +6,18 @@
   --among-yellow: #f5f512;
   --among-orange: #ef7d0e;
   --among-dark: #121b28;
-  --among-panel: #2b3641;
+  --among-panel-bg: #2b3641;
 }
 
 body {
   margin: 0;
-  background-color: transparent;
+  background-color: #000;
   color: #fff;
   font-family: 'JetBrains+Mono', monospace;
 }
 
-/* Neon Logo */
-.neon-text {
+/* Neon Glow for Logo */
+.neon-logo {
   color: #fff;
   font-family: 'Orbitron', sans-serif;
   text-shadow: 
@@ -25,85 +25,109 @@ body {
     0 0 20px #38fedc,
     0 0 40px #38fedc,
     0 0 80px #38fedc;
+  letter-spacing: 0.15em;
+  font-weight: 900;
 }
 
-/* Plaque style */
-.secure-login-plaque {
-  background: #1a0505;
-  border: 2px solid #522;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+/* Gold Secure Login Banner */
+.login-header-banner {
+  background: #2a0a0a;
+  border: 2px solid #5a1111;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+  padding: 8px 60px;
 }
 
-/* Identity Panel */
-.identity-panel {
-  background-color: var(--among-panel);
-  border: 1px solid #4a5568;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+/* Identity Verify Window */
+.identity-verify-window {
+  background-color: var(--among-panel-bg);
+  border: 2px solid #4a5568;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+  position: relative;
 }
 
-.screw {
-  width: 12px;
-  height: 12px;
-  background: #1a202c;
-  border: 1px solid #4a5568;
+.window-corner-screw {
+  width: 10px;
+  height: 10px;
+  background: #111;
+  border: 2px solid #4a5568;
   border-radius: 50%;
   position: absolute;
 }
 
-/* Login Button Pattern */
-.login-button-textured {
+/* Patterned Cyan Button */
+.login-button-cyan {
   background: linear-gradient(180deg, #10b6d4 0%, #0891b2 100%);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 0px #064e3b;
+  box-shadow: 0 5px 0px #064e3b;
+  border: none;
+  transition: all 0.1s;
 }
 
-.login-button-textured::after {
+.login-button-cyan::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background-image: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
   background-size: 6px 6px;
   pointer-events: none;
 }
 
-.login-button-textured:active {
-  transform: translateY(2px);
+.login-button-cyan:active {
+  transform: translateY(3px);
   box-shadow: 0 2px 0px #064e3b;
 }
 
-/* Skeld Animation */
-.skeld-fly {
-  animation: skeldFly 25s linear infinite;
-}
-
-@keyframes skeldFly {
-  0% { transform: translate(120vw, 15vh) rotate(-10deg) scale(0.7); }
-  100% { transform: translate(-60vw, 75vh) rotate(5deg) scale(1.3); }
-}
-
-.input-field {
-  background: white;
-  color: black;
-  font-family: 'JetBrains Mono', monospace;
+.input-box {
+  background: #fff;
+  color: #333;
   border: 1px solid #718096;
   border-right: 8px solid #cbd5e0;
+  padding: 8px 40px 8px 12px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.progress-track {
+/* Task Progress Bar */
+.task-progress-container {
+  height: 10px;
   background: #1a202c;
-  border: 2px solid #000;
-  border-radius: 9999px;
-  height: 12px;
+  border: 1px solid #000;
+  border-radius: 99px;
+  overflow: hidden;
 }
 
-.progress-fill {
-  background: var(--among-yellow);
+.task-progress-fill {
   height: 100%;
+  background: var(--among-yellow);
+  box-shadow: 0 0 10px var(--among-yellow);
 }
 
-.footer-access {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  border-top: 1px solid #2d3748;
+/* Bottom Footer */
+.station-footer {
+  background: rgba(0,0,0,0.8);
+  border-top: 1px solid #333;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+/* Skeld Ship Intro */
+.skeld-silhouette {
+  animation: floatSkeld 30s linear infinite;
+  opacity: 0.2;
+}
+
+@keyframes floatSkeld {
+  0% { transform: translate(120vw, 10vh) rotate(-10deg) scale(0.6); }
+  100% { transform: translate(-50vw, 80vh) rotate(10deg) scale(1.4); }
+}
+
+.marquee-warning {
+  animation: scrollText 15s linear infinite;
+}
+
+@keyframes scrollText {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
 }
